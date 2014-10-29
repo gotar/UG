@@ -1,44 +1,44 @@
-require_relative '../../../lib/extend_enumerable'
-require_relative '../../../models/money'
+require_relative '../../lib/extend_enumerable'
+require_relative '../../lib/money'
 
 describe Money do
-  it "should be initialized with two arguments" do
+  it "be initialized with two arguments" do
     expect {
       Money.new(10, 'EUR')
     }.to_not raise_error
   end
 
   describe "#value" do
-    it "should convert it to a number" do
-      Money.new('100', 'EUR').value.should == 100
+    it "convert it to a number" do
+      expect(Money.new('100', 'EUR').value).to eq(100)
     end
 
-    it "should work for numbers with fractional digits" do
-      Money.new('123.45', 'EUR').value.should == 123.45
+    it "work for numbers with fractional digits" do
+      expect(Money.new('123.45', 'EUR').value).to eq(123.45)
     end
 
-    it "should allow for negativ numbers" do
-      Money.new(-123.45, 'EUR').value.should == -123.45
+    it "allow for negativ numbers" do
+      expect(Money.new(-123.45, 'EUR').value).to eq(-123.45)
     end
   end
 
   describe "#currency" do
-    it "should save it as it was passed" do
-      Money.new(10, 'PLN').currency.should == 'PLN'
+    it "save it as it was passed" do
+      expect(Money.new(10, 'PLN').currency).to eq('PLN')
     end
   end
 
   describe "#to_s" do
-    it "should return value with currency" do
-      Money.new('123.45', 'PLN').to_s.should == "123.45 PLN"
+    it "return value with currency" do
+      expect(Money.new('123.45', 'PLN').to_s).to eq("123.45 PLN")
     end
 
-    it "should always return two fractional digits" do
-      Money.new('1.6', 'EUR').to_s.should == '1.60 EUR'
+    it "always return two fractional digits" do
+      expect(Money.new('1.6', 'EUR').to_s).to eq('1.60 EUR')
     end
 
-    it "should keep negative value" do
-      Money.new('-1.6', 'EUR').to_s.should == '-1.60 EUR'
+    it "keep negative value" do
+      expect(Money.new('-1.6', 'EUR').to_s).to eq('-1.60 EUR')
     end
   end
 
@@ -46,25 +46,25 @@ describe Money do
     let(:money) { Money.new('12.34', 'EUR') }
     let(:result) { money * 0.1 }
 
-    it "should return a new money" do
-      result.should be_a(Money)
-      result.should_not == money
+    it "return a new money" do
+      expect(result).to be_a(Money)
+      expect(result).not_to eq(money)
     end
 
-    it "should multiplicate value of the money" do
-      result.value.should == 1.23
+    it "multiplicate value of the money" do
+      expect(result.value).to eq(1.23)
     end
 
-    it "should keep the currency of the original money" do
-      result.currency.should == 'EUR'
+    it "keep the currency of the original money" do
+      expect(result.currency).to eq('EUR')
     end
 
-    it "should calculate negative value in proper way" do
-     ( Money.new('-12.34', 'EUR') * 0.1).value.should == -1.23
+    it "calculate negative value in proper way" do
+     expect(( Money.new('-12.34', 'EUR') * 0.1).value).to eq(-1.23)
     end
 
-    it "should allow to multiple for negativ value" do
-     ( Money.new('12.34', 'EUR') * (-1)).value.should == -12.34
+    it "allow to multiple for negativ value" do
+     expect(( Money.new('12.34', 'EUR') * (-1)).value).to eq(-12.34)
     end
   end
 
@@ -72,20 +72,20 @@ describe Money do
     let(:money) { Money.new('12.34', 'EUR') }
     let(:result) { money + Money.new('5.6', 'EUR') }
 
-    it "should return a new money" do
-      result.should be_a(Money)
-      result.should_not == money
+    it "return a new money" do
+      expect(result).to be_a(Money)
+      expect(result).not_to eq(money)
     end
 
-    it "should add values of both monies" do
-      result.value.should == 17.94
+    it "add values of both monies" do
+      expect(result.value).to eq(17.94)
     end
 
-    it "should keep currency of the money" do
-      result.currency.should == 'EUR'
+    it "keep currency of the money" do
+      expect(result.currency).to eq('EUR')
     end
 
-    it "should raise error when monies have different currency" do
+    it "raise error when monies have different currency" do
       expect {
         money + Money.new('5.6', 'PLN')
       }.to raise_error(ArgumentError)
@@ -96,43 +96,52 @@ describe Money do
     let(:money) { Money.new('12.34', 'EUR') }
     let(:result) { money - Money.new('5.6', 'EUR') }
 
-    it "should return a new money" do
-      result.should be_a(Money)
-      result.should_not == money
+    it "return a new money" do
+      expect(result).to be_a(Money)
+      expect(result).not_to eq(money)
     end
 
-    it "should minus values of both monies" do
-      result.value.should == 6.74
+    it "minus values of both monies" do
+      expect(result.value).to eq(6.74)
     end
 
-    it "should keep currency of the money" do
-      result.currency.should == 'EUR'
+    it "keep currency of the money" do
+      expect(result.currency).to eq('EUR')
     end
 
-    it "should raise error when monies have different currency" do
+    it "raise error when monies have different currency" do
       expect {
         money - Money.new('5.6', 'PLN')
       }.to raise_error(ArgumentError)
     end
   end
-  
+
   describe "#positive?" do
     context "for money with positive value" do
       subject { Money.new('12.34', 'EUR') }
 
-      its(:positive?) { should be_true }
+      describe '#positive?' do
+        subject { super().positive? }
+        it { is_expected.to be_truthy }
+      end
     end
 
     context "for money with negative value" do
       subject { Money.new('-12.34', 'EUR') }
 
-      its(:positive?) { should be_false }
+      describe '#positive?' do
+        subject { super().positive? }
+        it { is_expected.to be_falsey }
+      end
     end
 
     context "for money with zero value" do
       subject { Money.new('0.00', 'EUR') }
 
-      its(:positive?) { should be_false }
+      describe '#positive?' do
+        subject { super().positive? }
+        it { is_expected.to be_falsey }
+      end
     end
   end
 
@@ -144,21 +153,22 @@ describe Money do
     let(:more_pln) { Money.new('8.99', 'PLN') }
     let(:neg_pln) { Money.new('-2.99', 'PLN') }
 
-    it "should return empty array for empty array" do
-      Money.sum([]).should == []
+    it "return empty array for empty array" do
+      expect(Money.sum([])).to eq([])
     end
 
-    it "should return array with one element for one element array" do
-      Money.sum([little_euro]).should == [little_euro]
+    it "return array with one element for one element array" do
+      expect(Money.sum([little_euro])).to eq([little_euro])
     end
 
-    it "should return two elements array when two different currencies are passed" do
-      Money.sum([little_euro, little_pln]).should == [little_euro, little_pln]
+    it "return two elements array when two different currencies are passed" do
+      expect(Money.sum([little_euro, little_pln])).to eq([little_euro, little_pln])
     end
 
-    it "should sum all moneys matching currencies" do
-      Money.sum([little_euro, more_euro, neg_euro, little_pln, more_pln, neg_pln]).should ==
+    it "sum all moneys matching currencies" do
+      expect(Money.sum([little_euro, more_euro, neg_euro, little_pln, more_pln, neg_pln])).to eq(
         [Money.new('8.23', 'EUR'), Money.new('8.33', 'PLN')]
+      )
     end
   end
 end
