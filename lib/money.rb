@@ -18,6 +18,7 @@ class Money
     if other.currency != currency
       raise ArgumentError.new("Can't add monies due to different currency: #{other.inspect} and #{self.inspect}.")
     end
+
     Money.new(value + other.value, currency)
   end
 

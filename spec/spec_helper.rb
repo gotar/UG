@@ -1,5 +1,4 @@
-require_relative '../lib/money'
-require_relative '../lib/exchange'
+require_relative '../lib/report'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
